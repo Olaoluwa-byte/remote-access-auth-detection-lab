@@ -14,7 +14,7 @@ A synthetic detection-engineering lab for successful remote-gateway logins that 
 
 **What validation shows.** The offline suite has 27 tests and 40 unique cases. Default and alternate Splunk exports matched all 40 IDs and all 15 reference output fields. Benign logins, policy violations, MFA failures, exceptions and invalid telemetry have explicit outcomes.
 
-**Scope.** Synthetic, normalized CSV inputs only. No raw-vendor parser, production ingestion or enabled scheduled alert is shipped. Findings are investigation indicators, not proof of MFA bypass or CVE exploitation. Independent review of the latest documentation and fresh capture remains pending.
+**Scope.** Synthetic, normalized CSV inputs only. No raw-vendor parser, production ingestion or enabled scheduled alert is shipped. Findings are investigation indicators, not proof of MFA bypass or CVE exploitation.
 
 ### Results
 
@@ -23,7 +23,7 @@ A synthetic detection-engineering lab for successful remote-gateway logins that 
 | Offline tests | 27 passing tests | [Test suite](tests/test_detection.py) |
 | Fixtures | 40 unique cases from 41 raw records | [Expected outcomes](fixtures/expected.json) |
 | Manual Splunk parity | 40/40 cases in both default and alternate datasets | [CSV appendix](docs/results/README.md) |
-| Diagnostics | 40 matching rows per dataset | Screenshots in Appendix A |
+| Diagnostics | 40 matching rows per dataset | Alternate dataset screenshots in Appendix A; [evidence status](docs/validation.md) |
 | CI | Python 3.10/3.12 validation and Gitleaks configured; check the run for each commit | [GitHub Actions](https://github.com/Olaoluwa-byte/remote-access-auth-detection-lab/actions) |
 
 ### Coverage & Limitations
@@ -35,7 +35,7 @@ A synthetic detection-engineering lab for successful remote-gateway logins that 
 | Scoped exceptions | Failed MFA on a schema-valid successful login cannot be waived |
 | Invalid telemetry | Separate triage is required; invalid is not normal |
 | Lookup integrity | Python rejects duplicate keys; SPL requires manual preflight |
-| Execution provenance | Fresh capture retained privately; some lookup binding is inferred from metadata and review is pending |
+| Execution provenance | Fresh capture retained privately; lookup binding is partly corroborated by metadata, not explicit paths |
 
 [Detection SPL](detections/c07_auth_deviation.spl) · [Validation procedure](docs/splunk-validation.md) · [Evidence status](docs/validation.md) · [Operational limitations](docs/review-disposition.md)
 
@@ -67,7 +67,7 @@ The images show synthetic case IDs and results only. Browser chrome, account con
 <details>
 <summary><b>B. Quick start and fixture reproduction</b></summary>
 
-Run from the repository root in the VS Code terminal:
+Run from the repository root in a terminal:
 
 ```bash
 python3 -m unittest discover -s tests -v
@@ -121,7 +121,7 @@ baseline, disposition or test-label fields. Upload ONLY the generated CSV and th
 validated lookups in a separately approved manual Splunk phase. Do not point this
 query at unvalidated event-supplied `valid`, `mfa_known` or `event_epoch` fields.
 A production parser, source-specific logging assessment and indexed-data search
-are future work. Raw-vendor extraction is not verified. Supplied exports from manual Splunk runs corroborate synthetic decision parity; complete execution provenance remains open (see docs/validation.md).
+are future work. Raw-vendor extraction is not verified. Supplied exports from manual Splunk runs corroborate synthetic decision parity; complete execution provenance remains open (see [validation evidence](docs/validation.md)).
 
 The detection projects input fields before lookup to discard injected decision
 fields. Lookup outputs use separate names and are always overwritten by the
@@ -216,7 +216,7 @@ until a scoped exception or separately reviewed baseline update permits it.
 <details>
 <summary><b>F. Evidence, limitations and future work</b></summary>
 
-See `docs/validation.md` for evidence status and `docs/splunk-validation.md` for reproducible manual validation. The default and alternate exported results each matched all 40 IDs and output fields. Fresh per-run logs, a lookup inventory and matching operator-supplied timestamped snapshots are retained privately. Independent review of the new capture remains pending; see docs/validation.md for lookup-binding inference and other limits.
+See [validation evidence](docs/validation.md) and the [manual validation procedure](docs/splunk-validation.md). The default and alternate exported results each matched all 40 IDs and output fields. Fresh per-run logs, a lookup inventory and matching operator-supplied timestamped snapshots are retained privately. Binding is corroborated by metadata uniqueness for three lookups per run, not explicit paths; see [provenance limits](docs/validation.md).
 
 Synthetic gateways expose idealized method/MFA fields. Real appliances may omit,
 mislabel or forge them; a compromised gateway may report SAML+MFA even during bypass.
@@ -224,7 +224,7 @@ This lab cannot detect such a bypass from trustworthy-looking false telemetry.
 Shared identities, legitimate enrollment, sparse/stale history and policy mistakes
 cause uncertainty/false positives. No geographic, session-sequence, brute-force,
 password-spray or CVE-specific detection is implemented. No claims of production
-coverage, zero false positives, licensing suitability or exam readiness are made.
+coverage or zero false positives are made.
 
 Motivation: detecting deviations from approved remote-access authentication policy. No vendor-specific vulnerability coverage is claimed.
 

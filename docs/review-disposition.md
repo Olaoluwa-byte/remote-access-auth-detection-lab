@@ -7,4 +7,4 @@
 - Live malformed-field checks covered blank MFA and blank valid only. Other guards have offline coverage or remain untested live.
 - Unknown required MFA may alert under break-glass; unsupported MFA never becomes passed.
 - Baseline refresh/expiry, raw parsing, ingestion-time/clock guards and scheduled operation remain future work.
-- Fresh capture includes per-run logs, inventory and matching operator-supplied before/after snapshots. Lookup binding partly depends on metadata inference; independent review remains pending. See validation.md for warnings and provenance limits.
+- Fresh capture includes per-run logs, inventory and matching operator-supplied before/after snapshots. Lookup binding is corroborated by metadata uniqueness, not explicit paths. See [validation evidence](validation.md) for warnings and provenance limits.

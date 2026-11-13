@@ -1,6 +1,6 @@
 # Manual Splunk validation and provenance recapture
 
-Initial manual fixture runs produced parity-matching exports. Complete provenance recapture remains pending; see validation.md. Use only authorized task-owned contexts. Do not enable schedules or external actions.
+Initial and fresh manual fixture runs produced parity-matching exports. Fresh capture includes logs, inventory and timestamped operator-supplied snapshots. Evaluation paths are explicit; baseline/policy/exception binding is corroborated by unique size/mtime pairs, not explicit paths. See [validation evidence](validation.md). Use only authorized task-owned contexts. Do not enable schedules or external actions.
 
 1. Use a clean checkout of the exact reviewed repair commit. Record HEAD, Python
    version and SHA-256 hashes. Create new output directories (choose fresh names if
@@ -52,7 +52,7 @@ Initial manual fixture runs produced parity-matching exports. Complete provenanc
    and SPL must use minimum_samples from this exact baseline CSV.
 4. Run `detections/c07_auth_deviation.spl` unchanged in the correct app. inputlookup
    consumes fixture CSV, not indexes or the time picker. event_epoch governs all
-   time decisions. Capture SID, app context, query text, Job Inspector errors/warnings, search.log and full result CSV immediately. Extend job lifetime before expiry. Capture lookup-table-files REST inventory; require evidence of resolved paths for each lookup, not just matching names. Take timestamped server sha256sum and stat output before and after each dataset run. Preserve transcripts and compare hashes; do not reconstruct missing timestamps retrospectively.
+   time decisions. Capture SID, app context, query text, Job Inspector errors/warnings, search.log and full result CSV immediately. Extend job lifetime before expiry. Capture lookup-table-files REST inventory; For fully explicit resolution, require resolved paths for each lookup, not just matching names. The retained fresh capture did not meet this stricter criterion for baseline/policy/exceptions: it uses unique size/mtime correlation against inventory/stat instead. Label such evidence as metadata-corroborated binding and retain the limitation; do not report explicit resolution as complete. Take timestamped server sha256sum and stat output before and after each dataset run. Preserve transcripts and compare hashes; do not reconstruct missing timestamps retrospectively.
    Expect exactly 40 unique IDs from 41 raw records, with all flags (including
    failed_mfa_on_success), mfa_note, disposition, exception fields, parse_error and
    occurrence count equal to actual.json. Compare every ID and field externally,
@@ -74,7 +74,7 @@ Initial manual fixture runs produced parity-matching exports. Complete provenanc
    - Set minimum_samples=4 for the three-sample alice/gw-east history in BOTH the
      local control CSV and uploaded copy: Python and SPL must show baseline_unknown=1.
    Restore only task-owned control copies. Record each mutation, expected/actual
-   result and SID. These controls produced the expected supplied exports in the initial run; full resolution provenance is still incomplete.
+   result and SID. These controls produced the expected supplied exports in the earlier runs. The fresh capture covered inventory, default/alternate detection and diagnostics only; it did not rerun negative controls or establish their lookup-resolution provenance.
 7. Preserve every failure and warning tied to exact commit, app and lookup hashes.
    If parity fails, stop and reconcile; Python passing does not prove SPL correctness.
    Cleanup only newly created task-owned contexts/files after agreed retention,
