@@ -148,7 +148,7 @@ until a scoped exception or separately reviewed baseline update permits it.
 
 ## Evidence and limitations
 
-See `docs/validation.md` for evidence status and `docs/splunk-validation.md` for reproducible manual validation. The default and alternate exported results each matched all 40 IDs and output fields. Full per-run lookup-resolution logs and timestamped before/after server hashes are still missing.
+See `docs/validation.md` for evidence status and `docs/splunk-validation.md` for reproducible manual validation. The default and alternate exported results each matched all 40 IDs and output fields. Fresh per-run logs, a lookup inventory and matching operator-supplied timestamped snapshots are retained privately. Independent review of the new capture remains pending; see docs/validation.md for lookup-binding inference and other limits.
 
 Synthetic gateways expose idealized method/MFA fields. Real appliances may omit,
 mislabel or forge them; a compromised gateway may report SAML+MFA even during bypass.
