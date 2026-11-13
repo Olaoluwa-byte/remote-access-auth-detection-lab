@@ -162,7 +162,7 @@ Motivation: detecting deviations from approved remote-access authentication poli
 
 ## Validation and limitations
 
-Run the commands above to reproduce the offline fixtures. Supplied manual Splunk exports matched the reference for two 40-case datasets. These exports corroborate decision parity but do not establish complete execution provenance. Fresh lookup-resolution logs and timestamped before/after server hashes are pending. See docs/validation.md and docs/review-disposition.md for limitations.
+Run the commands above to reproduce the offline fixtures. Supplied manual Splunk exports matched the reference for two 40-case datasets. These exports corroborate decision parity but do not establish complete execution provenance. Fresh logs, a lookup inventory and matching operator-supplied before/after snapshots have been captured; their independent review remains pending. Binding of three lookups per run is corroborated through metadata correlation rather than explicit full paths. See docs/validation.md and docs/review-disposition.md for limitations.
 
 ## License
 
