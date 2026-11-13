@@ -1,0 +1,18 @@
+| inputlookup c07_evaluation.csv
+| fields event_id valid parse_error event_epoch gateway_id user src_ip result auth_method mfa_result mfa_known mfa_note session_id occurrences
+| eval valid=coalesce(tonumber(valid),0), event_epoch=tonumber(event_epoch), occurrences=tonumber(occurrences), mfa_result=if(isnull(mfa_result) OR len(trim(mfa_result))=0,"unknown",mfa_result)
+| eval valid=if(valid=1 AND isnotnull(event_id) AND isnotnull(event_epoch) AND isnotnull(gateway_id) AND isnotnull(user) AND in(result,"success","failure") AND in(auth_method,"saml","local","oidc","certificate"),1,0), mfa_result=if(in(mfa_result,"passed","failed","not_performed","unknown"),mfa_result,"unknown")
+| eval mfa_known=if(in(mfa_result,"passed","failed","not_performed"),1,0), mfa_note=if(in(mfa_note,"none","missing","wrong_type","unsupported","explicit_unknown"),mfa_note,"contract_missing_note")
+| lookup c07_baseline.csv gateway_id user OUTPUT sample_count AS b_count minimum_samples AS b_min observed_methods AS b_methods baseline_cutoff_epoch AS b_cutoff
+| lookup c07_policy.csv gateway_id user OUTPUT allowed_methods AS p_methods require_mfa AS p_mfa
+| lookup c07_exceptions.csv gateway_id user auth_method OUTPUT exception_id AS x_id reason AS x_reason valid_from_epoch AS x_from valid_to_epoch AS x_to allow_method AS x_method waive_mfa AS x_mfa
+| eval is_success=if(valid=1 AND result="success",1,0), baseline_known=if(isnotnull(b_count) AND tonumber(b_min)>=1 AND tonumber(b_count)>=tonumber(b_min) AND event_epoch>=tonumber(b_cutoff),1,0), policy_known=if(isnotnull(p_methods),1,0)
+| eval baseline_unknown=if(is_success=1 AND baseline_known=0,1,0), method_deviation=if(is_success=1 AND baseline_known=1 AND isnull(mvfind(split(b_methods,"|"),"^".auth_method."$")),1,0), policy_unknown=if(is_success=1 AND policy_known=0,1,0)
+| eval policy_violation=if(is_success=1 AND policy_known=1 AND isnull(mvfind(split(p_methods,"|"),"^".auth_method."$")),1,0), mfa_violation=if(is_success=1 AND policy_known=1 AND tonumber(p_mfa)=1 AND mfa_result!="passed",1,0), telemetry_unknown=if(is_success=1 AND mfa_known=0,1,0), failed_mfa_on_success=if(is_success=1 AND mfa_result="failed",1,0)
+| eval exception_active=if(policy_known=1 AND isnotnull(x_id) AND event_epoch>=tonumber(x_from) AND event_epoch<tonumber(x_to),1,0), method_alarm=if(method_deviation=1 OR policy_violation=1,1,0)
+| eval waived_method=if(exception_active=1 AND tonumber(x_method)=1 AND method_alarm=1,1,0), waived_mfa=if(exception_active=1 AND tonumber(x_mfa)=1 AND mfa_violation=1 AND mfa_result="not_performed",1,0)
+| eval exception_applied=if(waived_method=1 OR waived_mfa=1,1,0)
+| eval exception_id=if(exception_applied=1,x_id,""), exception_reason=if(exception_applied=1,x_reason,"")
+| eval disposition=case(valid!=1,"invalid",result!="success","failed_login",failed_mfa_on_success=1 OR (method_alarm=1 AND waived_method=0) OR (mfa_violation=1 AND waived_mfa=0),"alert",baseline_unknown=1 OR policy_unknown=1 OR telemetry_unknown=1,"review",exception_applied=1,"excepted",true(),"normal")
+| table event_id disposition baseline_unknown method_deviation policy_unknown policy_violation mfa_violation telemetry_unknown failed_mfa_on_success mfa_note exception_applied exception_id exception_reason occurrences parse_error
+| sort 0 event_id

@@ -1,0 +1,7 @@
+gateway_id,user,allowed_methods,require_mfa
+gw-east,alice,certificate|saml,1
+gw-east,bob,saml,1
+gw-east,carol,saml,1
+gw-east,dave,saml,1
+gw-east,sparse,saml,1
+gw-west,alice,local,0

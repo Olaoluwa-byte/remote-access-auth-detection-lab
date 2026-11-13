@@ -1,0 +1,3 @@
+gateway_id,user,auth_method,exception_id,reason,valid_from_epoch,valid_to_epoch,allow_method,waive_mfa
+gw-east,bob,local,migration-1,Approved fictional enrollment transition,1794481200,1794488400,1,0
+gw-east,carol,local,breakglass-1,Approved fictional recovery exercise,1794481200,1794488400,1,1
