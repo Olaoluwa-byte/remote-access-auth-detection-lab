@@ -1,15 +1,71 @@
-# Remote access authentication deviation lab — C07
+# Remote Access Authentication Detection Lab
 
-This synthetic
-lab flags successful remote-gateway logins that deviate from a frozen history or
-explicit authentication policy. Missing required MFA evidence is a separate signal.
-It does not prove MFA bypass, identify exploit use, or reproduce any vendor CVE.
+Licensed under the [MIT License](LICENSE).
 
-No appliance, network calls, credentials, third-party Python dependencies, or new
-VM are needed. No ingestion configuration or enabled scheduled alert is shipped.
-C05, C09 and the running Splunk installation are not changed.
+A synthetic detection-engineering lab for successful remote-gateway logins that deviate from a frozen authentication baseline or explicit policy. MFA evidence is evaluated separately from the authentication method: SAML alone does not establish MFA.
 
-## Quick start (local Python 3.9+)
+---
+
+## Executive Summary
+
+**Problem.** A successful login can use an unexpected authentication method or lack required MFA evidence. Learning a baseline from the same traffic being evaluated can hide the deviation.
+
+**What I built.** A deterministic event generator, a frozen training baseline, explicit policy and time-bounded exception lookups, a Python reference evaluator, and a matching Splunk search.
+
+**What validation shows.** The offline suite has 27 tests and 40 unique cases. Default and alternate Splunk exports matched all 40 IDs and all 15 reference output fields. Benign logins, policy violations, MFA failures, exceptions and invalid telemetry have explicit outcomes.
+
+**Scope.** Synthetic, normalized CSV inputs only. No raw-vendor parser, production ingestion or enabled scheduled alert is shipped. Findings are investigation indicators, not proof of MFA bypass or CVE exploitation. Independent review of the latest documentation and fresh capture remains pending.
+
+### Results
+
+| Check | Result | Evidence |
+|---|---|---|
+| Offline tests | 27 passing tests | [Test suite](tests/test_detection.py) |
+| Fixtures | 40 unique cases from 41 raw records | [Expected outcomes](fixtures/expected.json) |
+| Manual Splunk parity | 40/40 cases in both default and alternate datasets | [CSV appendix](docs/results/README.md) |
+| Diagnostics | 40 matching rows per dataset | Screenshots in Appendix A |
+| CI | Python 3.10/3.12 validation and Gitleaks configured; check the run for each commit | [GitHub Actions](https://github.com/Olaoluwa-byte/remote-access-auth-detection-lab/actions) |
+
+### Coverage & Limitations
+
+| Boundary | Impact |
+|---|---|
+| Trusted normalized input | Arbitrary raw gateway logs are not supported |
+| Frozen baseline and explicit policy | Evaluation traffic cannot teach itself into the baseline |
+| Scoped exceptions | Failed MFA on a schema-valid successful login cannot be waived |
+| Invalid telemetry | Separate triage is required; invalid is not normal |
+| Lookup integrity | Python rejects duplicate keys; SPL requires manual preflight |
+| Execution provenance | Fresh capture retained privately; some lookup binding is inferred from metadata and review is pending |
+
+[Detection SPL](detections/c07_auth_deviation.spl) · [Validation procedure](docs/splunk-validation.md) · [Evidence status](docs/validation.md) · [Operational limitations](docs/review-disposition.md)
+
+---
+
+## Appendix
+
+<details>
+<summary><b>A. Splunk screenshots and example outcomes</b></summary>
+
+These are screenshots of the retained alternate-dataset diagnostic search in Splunk, captured on 2026-11-13 UTC. Each page shows 20 of the 40 cases, with `matched=1` indicating agreement with the expected diagnostic fields. Full ID-set and 15-field comparisons are recorded separately in the [validation evidence](docs/validation.md).
+
+### Benign, suspicious and approved-exception outcomes
+
+![Splunk diagnostic page 1: normal SAML MFA, unapproved local logins, missing MFA and approved exceptions match expected outcomes](docs/images/splunk-validation-cases.jpg)
+
+Normal SAML+MFA is `normal`; unapproved local login and missing/failed MFA are `alert`; approved migration and break-glass examples are `excepted`. Unknown identity and sparse baseline remain `review`.
+
+### MFA failures and exception boundaries
+
+![Splunk diagnostic page 2: failed MFA remains alert under break-glass and optional policy; boundary and invalid-input cases match](docs/images/splunk-mfa-boundaries.jpg)
+
+Failed MFA remains `alert` under break-glass, missing policy and optional-MFA policy. The final second inside an exception is `excepted`; invalid Unicode inputs remain `invalid`.
+
+The images show synthetic case IDs and results only. Browser chrome, account controls and server addresses are outside the captured viewport. No result cells were edited. These views illustrate the retained search; they are not new runs or a substitute for full provenance evidence. See [screenshot provenance](docs/images/README.md).
+
+</details>
+
+<details>
+<summary><b>B. Quick start and fixture reproduction</b></summary>
 
 Run from the repository root in the VS Code terminal:
 
@@ -44,7 +100,10 @@ The fixed seed controls fictional source addresses; fixed reference time control
 training, evaluation and exception times. This avoids dependency on current VM
 clock health. Reproduction of committed fixtures requires the documented defaults.
 
-## Pipeline and trust boundary
+</details>
+
+<details>
+<summary><b>C. Pipeline and trust boundary</b></summary>
 
 1. `fixtures/training.jsonl`: separate, operator-trusted synthetic history.
 2. `lookups/c07_baseline.csv`: frozen successful-login history by **gateway + user**.
@@ -69,7 +128,10 @@ fields. Lookup outputs use separate names and are always overwritten by the
 lookup. Missing lookup files or corrupt tables invalidate a run; never interpret
 partial Splunk results or lookup warnings as a passing test.
 
-## Schema and normalization
+</details>
+
+<details>
+<summary><b>D. Schema and normalization</b></summary>
 
 All events use schema_version **integer 1** (booleans are rejected) and these fields:
 
@@ -97,7 +159,10 @@ counts identical duplicates in `occurrences`. Conflict means any difference in
 canonical JSON content, including an identity change; the entire batch fails.
 Identity lowercasing is a lab assumption, not appropriate for every real system.
 
-## Decision rules
+</details>
+
+<details>
+<summary><b>E. Detection rules and exceptions</b></summary>
 
 A history is usable only when its distinct successful training count reaches
 `minimum_samples` in the frozen baseline CSV (default **3**). The generator's
@@ -146,7 +211,10 @@ The evaluator never updates lookup files. Current observed behavior cannot overr
 explicit policy. A policy-permitted new method can still be a historical deviation
 until a scoped exception or separately reviewed baseline update permits it.
 
-## Evidence and limitations
+</details>
+
+<details>
+<summary><b>F. Evidence, limitations and future work</b></summary>
 
 See `docs/validation.md` for evidence status and `docs/splunk-validation.md` for reproducible manual validation. The default and alternate exported results each matched all 40 IDs and output fields. Fresh per-run logs, a lookup inventory and matching operator-supplied timestamped snapshots are retained privately. Independent review of the new capture remains pending; see docs/validation.md for lookup-binding inference and other limits.
 
@@ -160,16 +228,14 @@ coverage, zero false positives, licensing suitability or exam readiness are made
 
 Motivation: detecting deviations from approved remote-access authentication policy. No vendor-specific vulnerability coverage is claimed.
 
-## Validation and limitations
-
-Run the commands above to reproduce the offline fixtures. Supplied manual Splunk exports matched the reference for two 40-case datasets. These exports corroborate decision parity but do not establish complete execution provenance. Fresh logs, a lookup inventory and matching operator-supplied before/after snapshots have been captured; their independent review remains pending. Binding of three lookups per run is corroborated through metadata correlation rather than explicit full paths. See docs/validation.md and docs/review-disposition.md for limitations.
-
-## License
-
-MIT. See LICENSE.
-
-## Invalid telemetry requires separate attention
+### Invalid telemetry
 
 An unsupported method such as `radius` is invalid under this lab schema, even if the event reports successful authentication and failed MFA. Invalid events have zero behavioral flags; they are not normal events and the non-waivable alert guarantee does not apply to them. Operational integration must separately surface invalid telemetry for triage. No such operational alert is implemented here.
 
 Known successful training events with MFA `not_performed` may teach history for legitimate non-MFA methods. Explicit policy still independently enforces required MFA. Duplicate lookup keys are rejected automatically by Python but only by the documented manual preflight for SPL; scheduling requires an automated integrity guard first.
+
+</details>
+
+## License
+
+MIT. See [LICENSE](LICENSE).
