@@ -1,6 +1,6 @@
 # Remote access authentication deviation lab — C07
 
-**C07-PUBLISH-PREP-01 revision 1: unpublished candidate; candidate review and user acceptance pending.** This synthetic
+This synthetic
 lab flags successful remote-gateway logins that deviate from a frozen history or
 explicit authentication policy. Missing required MFA evidence is a separate signal.
 It does not prove MFA bypass, identify exploit use, or reproduce any vendor CVE.
@@ -160,13 +160,13 @@ coverage, zero false positives, licensing suitability or exam readiness are made
 
 Motivation: detecting deviations from approved remote-access authentication policy. No vendor-specific vulnerability coverage is claimed.
 
-## Review, rollback and learning
+## Validation and limitations
 
-This isolated fresh-root candidate derives from reviewed source `3ba8fb9ec0ee75789ee676a129b00fe9746a7a92`. Functional files are unchanged; private historical records are omitted and replaced by labeled summaries. The original private repository and evidence are preserved. The prior review found the offline source ready for acceptance, but does not automatically approve this new candidate. No public release, user acceptance, or enabled schedule is claimed.
+Run the commands above to reproduce the offline fixtures. Supplied manual Splunk exports matched the reference for two 40-case datasets. These exports corroborate decision parity but do not establish complete execution provenance. Fresh lookup-resolution logs and timestamped before/after server hashes are pending. See docs/validation.md and docs/review-disposition.md for limitations.
 
-See `docs/approved-publication-brief.md` for scope and `docs/review-disposition.md` for limits. Rollback: discard only this unpublished candidate; the original private history is unaffected. No license grant is included; choose a license before public distribution.
+## License
 
-Splunk learning: `lookup` adds separately trusted context, `eval` derives flags, and `table` displays evidence. A lookup is not automatically a trustworthy baseline. These exercises do not establish certification readiness.
+MIT. See LICENSE.
 
 ## Invalid telemetry requires separate attention
 

@@ -1,0 +1,41 @@
+"event_id",disposition,"baseline_unknown","method_deviation","policy_unknown","policy_violation","mfa_violation","telemetry_unknown","failed_mfa_on_success","mfa_note","exception_applied","exception_id","exception_reason",occurrences,"parse_error"
+e0020,normal,0,0,0,0,0,0,0,none,0,"","",1,
+e0021,alert,0,1,0,1,1,0,0,none,0,"","",1,
+e0022,alert,0,0,0,0,1,0,1,none,0,"","",1,
+e0023,alert,0,0,0,0,1,1,0,missing,0,"","",1,
+e0024,alert,0,0,0,0,1,1,0,"explicit_unknown",0,"","",1,
+e0025,"failed_login",0,0,0,0,0,0,0,none,0,"","",1,
+e0026,excepted,0,1,0,1,0,0,0,none,1,"migration-1","Approved fictional enrollment transition",1,
+e0027,excepted,0,1,0,1,1,0,0,none,1,"breakglass-1","Approved fictional recovery exercise",1,
+e0028,alert,0,1,0,1,0,0,0,none,0,"","",1,
+e0029,excepted,0,1,0,1,0,0,0,none,1,"migration-1","Approved fictional enrollment transition",1,
+e0030,alert,0,1,0,1,0,0,0,none,0,"","",1,
+e0031,review,1,0,1,0,0,0,0,none,0,"","",1,
+e0032,normal,0,0,0,0,0,0,0,none,0,"","",1,
+e0033,review,1,0,0,0,0,0,0,none,0,"","",1,
+e0034,alert,0,0,0,1,0,0,0,none,0,"","",1,
+e0035,alert,0,1,0,0,0,0,0,none,0,"","",1,
+e0036,invalid,0,0,0,0,0,0,0,none,0,"","",1,user
+e0037,invalid,0,0,0,0,0,0,0,none,0,"","",1,"event_time"
+e0038,normal,0,0,0,0,0,0,0,none,0,"","",2,
+e0039,normal,0,0,0,0,0,0,0,none,0,"","",1,
+e0040,alert,0,1,0,1,1,0,1,none,1,"migration-1","Approved fictional enrollment transition",1,
+e0041,review,1,0,1,0,0,0,0,none,0,"","",1,
+e0042,alert,0,1,0,1,0,0,0,none,0,"","",1,
+e0043,review,0,0,1,0,0,0,0,none,0,"","",1,
+e0044,review,1,0,0,0,0,0,0,none,0,"","",1,
+e0045,alert,0,0,0,0,1,1,0,"wrong_type",0,"","",1,
+e0046,invalid,0,0,0,0,0,0,0,none,0,"","",1,"auth_method"
+e0047,invalid,0,0,0,0,0,0,0,none,0,"","",1,"src_ip"
+e0048,invalid,0,0,0,0,0,0,0,none,0,"","",1,"schema_version"
+e0049,review,0,0,0,0,0,1,0,"explicit_unknown",0,"","",1,
+e0050,alert,0,1,0,1,1,0,1,none,1,"breakglass-1","Approved fictional recovery exercise",1,
+e0051,alert,1,0,1,0,0,0,1,none,0,"","",1,
+e0052,alert,0,0,0,0,0,0,1,none,0,"","",1,
+e0053,alert,0,1,0,1,1,1,0,"explicit_unknown",1,"breakglass-1","Approved fictional recovery exercise",1,
+e0054,normal,0,0,0,0,0,0,0,none,0,"","",1,
+e0055,excepted,0,1,0,1,0,0,0,none,1,"migration-1","Approved fictional enrollment transition",1,
+e0056,alert,0,0,0,0,1,1,0,unsupported,0,"","",1,
+e0057,alert,0,0,0,0,1,1,0,"wrong_type",0,"","",1,
+e0058,invalid,0,0,0,0,0,0,0,none,0,"","",1,"event_time"
+e0059,invalid,0,0,0,0,0,0,0,none,0,"","",1,user

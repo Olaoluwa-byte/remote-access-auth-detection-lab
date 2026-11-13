@@ -1,9 +1,9 @@
-# Sanitized evidence summary
+# Validation evidence
 
-This is a newly written summary, not the original private transcripts. Historical packet hashes refer to private originals, not this document.
+The offline suite contains 27 tests and 40 unique fixture cases from 41 raw records. Run the README commands to reproduce them; the alternate set uses seed 42 and reference time 2025-01-01T00:00:00Z.
 
-Reviewed base: 3ba8fb9ec0ee75789ee676a129b00fe9746a7a92. Independent reviewer reported 27/27 Python tests, 40 unique cases in 41 raw records, reproducible default/alternate fixtures and exact bundle/diff consistency. Reviewer independently compared supplied live exports: 40 IDs and 600 cells per dataset, zero differences, 40 diagnostic matches per dataset. Reviewer did not run Splunk. Codex previously observed those manual jobs and exported results. The default Inspector expired. Full per-run resolution/search.log evidence and timestamped before/after server hashes remain open.
+Supplied manual Splunk exports were compared against the Python reference: each dataset had 40 unique IDs, complete ID-set equality and all 15 output fields equal. Both diagnostic exports had 40 matching rows. These comparisons corroborate logic parity, not complete provenance. The original default Inspector expired; complete per-run lookup-resolution logs and timestamped before/after server hashes remain pending. No new capture is claimed yet.
 
-All 18 local CSV hashes were independently recomputed and matched user-supplied server hashes. This corroborates file integrity but does not establish timestamped server provenance. Existing private GitHub upload was observed at the base SHA. This fresh-root candidate has not been pushed or released.
+Server hashes supplied by the operator matched independently recomputed local inputs, but were not timestamped before/after those searches. Raw vendor parsing, index integration, scheduling, clock-skew controls and production effectiveness are untested.
 
-Candidate validation is packaged separately and bound to its new commit. No raw ingestion, scheduling, vendor exploit coverage, clock/ingest-time guard or production readiness is established. Initial checks and preserved failures remain available in the private review archive.
+CI is configured to run unit tests, default/alternate fixture validation and Gitleaks history scans. A configured workflow is not proof of successful execution; inspect its run status for the commit being evaluated.
